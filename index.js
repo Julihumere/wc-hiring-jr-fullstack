@@ -36,8 +36,37 @@ import $t from './libs/test.js'
 import _ from 'lodash'
 const source = $t.source(1)
 $t.answer(1, async () => {
-  // Your code goes here
-  return 
+  const targetData = {
+    balance: 0,
+    income: 0,
+    expenses: 0,
+    byCategories: {}
+  }
+   
+   source.forEach((result)=>{
+     
+  let amountConverted = result.type === 'expense' ? result.amount * -1 : result.amount * 1
+  
+  let categories = targetData.byCategories[result.category]
+  
+     if(categories){
+       targetData.byCategories[result.category] += amountConverted
+     }else{
+       targetData.byCategories[result.category] = amountConverted
+     }
+     
+     if(result.type === 'income'){
+       targetData.income += result.amount
+     }else{
+       targetData.expenses += result.amount
+     }
+     
+     targetData.balance = targetData.income - targetData.expenses
+     }) 
+  
+  
+  return targetData
+     
 })
 
 /*
@@ -49,9 +78,9 @@ $t.answer(1, async () => {
 */
 const $source = $t.source(2)
 $t.answer(2, async () => {
-    // Your code goes here:
-    // 1. Get ids: $source.getIds()
-    // 2. Get text for every id: $source.getText(id)
-    // 3. Return array of texts
-    return 
+    let ids =  await $source.getIds()
+
+    let texts = await Promise.all(ids.map(id => $source.getText(id)))
+
+    return texts
 })
